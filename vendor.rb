@@ -12,8 +12,9 @@ class Item
 end
 
 class VendingMachine
-  def initialize(istream)
-    @istream = istream
+  def initialize(istream: STDIN, ostream: STDOUT)
+    @is = istream
+    @os = ostream
     @items = {}
   end
 
@@ -22,9 +23,9 @@ class VendingMachine
   end
 
   def show_items
-    printf "\n"
+    @os.printf "\n"
     @items.each_with_index do |(name, item), n|
-      printf(
+      @os.printf(
         "%2d. %-20s (%3d JPY) %s\n",
         n + 1,
         name,
@@ -36,8 +37,8 @@ class VendingMachine
   def choose_item
     loop do
       show_items
-      printf "Number? "
-      n = @istream.gets.to_i - 1
+      @os.printf "Number? "
+      n = @is.gets.to_i - 1
       if (0...@items.count).member? n
         item = @items.values[n]
         return item if item.stock.nonzero?
@@ -47,8 +48,8 @@ class VendingMachine
 
   def receive_payment_for(item)
     loop do
-      printf "Charge? "
-      s = @istream.gets.strip
+      @os.printf "Charge? "
+      s = @is.gets.strip
       n = s.to_i
       return n if s === n.to_s and 0 <= n
     end
@@ -58,12 +59,12 @@ class VendingMachine
     item = choose_item
     m = receive_payment_for item
     if m < item.price
-      printf "Shortage: %d JPY. Try again\n", item.price - m
+      @os.printf "Shortage: %d JPY. Try again\n", item.price - m
     elsif m > item.price
-      printf "Thanks, here's your change: %d JPY\n", m - item.price
+      @os.printf "Thanks, here's your change: %d JPY\n", m - item.price
       item.stock -= 1
     else
-      printf "Thanks, We've got exactly the amount of money we needed.\n"
+      @os.printf "Thanks, We've got exactly the amount of money we needed.\n"
       item.stock -= 1
     end
   end
@@ -73,10 +74,10 @@ class VendingMachine
   end
 
   def boot
-    printf "Hello\n"
+    @os.printf "Hello\n"
     while available?
       transact
     end
-    printf "No stock. Please try again tomorrow.\n"
+    @os.printf "No stock. Please try again tomorrow.\n"
   end
 end

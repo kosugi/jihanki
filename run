@@ -3,7 +3,7 @@
 
 require_relative 'vendor'
 
-vendor = VendingMachine.new(STDIN)
+vendor = VendingMachine.new()
 vendor.add Item.new('Orange juice', 98, 1)
 vendor.add Item.new('Pepsi NEX', 120, 2)
 vendor.add Item.new('Sprite', 150, 0)
