@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+require_relative 'vendor'
+
+vendor = VendingMachine.new(STDIN)
+vendor.add Item.new('Orange juice', 98, 1)
+vendor.add Item.new('Pepsi NEX', 120, 2)
+vendor.add Item.new('Sprite', 150, 0)
+vendor.add Item.new('Evian', 200, 3)
+vendor.add Item.new('Simle', 0, 1)
+vendor.boot
