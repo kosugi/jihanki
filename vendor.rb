@@ -34,30 +34,44 @@ class VendingMachine
     end
   end
 
+  def get_item_index
+    @is.gets.to_i - 1
+  end
+
+  def get_item_by_index(n)
+    if 0 <= n && n < @items.count
+      item = @items.values[n]
+      return item if item.stock.nonzero?
+    end
+    nil
+  end
+
   def choose_item
     loop do
       show_items
       @os.printf "Number? "
-      n = @is.gets.to_i - 1
-      if (0...@items.count).member? n
-        item = @items.values[n]
-        return item if item.stock.nonzero?
-      end
+      item = get_item_by_index(get_item_index)
+      return item if item
     end
   end
 
-  def receive_payment_for(item)
+  def get_payment_amount
+    s = @is.gets.strip
+    n = s.to_i
+    (s === n.to_s and 0 <= n)? n : nil
+  end
+
+  def ask_payment_amount
     loop do
       @os.printf "Charge? "
-      s = @is.gets.strip
-      n = s.to_i
-      return n if s === n.to_s and 0 <= n
+      n = get_payment_amount
+      return n if n
     end
   end
 
   def transact
     item = choose_item
-    m = receive_payment_for item
+    m = ask_payment_amount
     if m < item.price
       @os.printf "Shortage: %d JPY. Try again\n", item.price - m
     elsif m > item.price
